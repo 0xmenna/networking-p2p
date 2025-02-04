@@ -1,0 +1,19 @@
+[package]
+name = "networking_p2p"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1.5.0", features = ["macros", "rt", "rt-multi-thread", "signal"] }
+clap = { version = "4", features = ["derive", "env"] }
+libp2p = { version = "0.54", features = ["dns", "tokio", "identify", "kad", "relay", "gossipsub", "ping", "autonat", "quic"] }
+libp2p-connection-limits = "0.4"
+libp2p-swarm-derive = "0.35"
+codec = { package = "parity-scale-codec", version = "3.6.12", default-features = false, features = [
+	"derive",
+] }
+anyhow = "1.0.95"
+log = "0.4.22"
+futures = "0.3.31"
+rand = { version = "0.8.5", features = ["small_rng"] }
+async-trait = "0.1.85"
