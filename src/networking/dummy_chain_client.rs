@@ -5,7 +5,7 @@ pub type ClientError = ();
 
 pub type AuthorityPeers = HashSet<PeerId>;
 
-pub type NodeStreamStream =
+pub type NodeStream =
     Pin<Box<dyn Stream<Item = Result<AuthorityPeers, ClientError>> + Send + 'static>>;
 
 pub struct ContractClient;
@@ -17,7 +17,7 @@ impl Default for ContractClient {
 }
 
 impl ContractClient {
-    pub fn network_nodes_stream(&self, _interval: std::time::Duration) -> NodeStreamStream {
+    pub fn network_nodes_stream(&self, _interval: std::time::Duration) -> NodeStream {
         // return baseed on get_authorities
         Box::pin(futures::stream::once(async { Ok(get_authority_peers()) }))
     }

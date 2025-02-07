@@ -4,20 +4,18 @@ use std::{
     time::Duration,
 };
 
-use codec::{Decode, Encode};
 use futures::StreamExt;
 use libp2p::{
     allow_block_list::{self, AllowedPeers},
     swarm::ToSwarm,
     PeerId,
 };
+use serde::{Deserialize, Serialize};
 
-use super::{
-    dummy_chain_client::{AuthorityPeers, ClientError, ContractClient, NodeStreamStream},
-    wrapped::{BehaviourWrapper, TToSwarm},
-};
+use super::super::dummy_chain_client::{AuthorityPeers, ClientError, ContractClient, NodeStream};
+use super::wrapped::{BehaviourWrapper, TToSwarm};
 
-#[derive(Debug, Clone, Copy, Encode, Decode)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct WhitelistConfig {
     pub nodes_update_interval: Duration,
 }
@@ -38,7 +36,7 @@ impl Default for WhitelistConfig {
 
 pub struct WhitelistBehavior {
     allow: allow_block_list::Behaviour<AllowedPeers>,
-    active_nodes_stream: NodeStreamStream,
+    active_nodes_stream: NodeStream,
     registered_nodes: HashSet<PeerId>,
 }
 

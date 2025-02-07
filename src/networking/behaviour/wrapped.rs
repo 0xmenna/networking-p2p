@@ -10,7 +10,8 @@ use libp2p::{
     swarm::{
         ConnectionDenied, ConnectionId, FromSwarm, NetworkBehaviour, THandler, THandlerInEvent,
         THandlerOutEvent, ToSwarm,
-    }, Multiaddr, PeerId,
+    },
+    Multiaddr, PeerId,
 };
 
 pub type TToSwarm<T> =
