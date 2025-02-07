@@ -1,0 +1,19 @@
+[package]
+name = "example"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+networking = { path = "../networking" }
+tokio = { version = "1.5.0", features = ["fs", "macros", "sync"] }
+clap = { version = "4", features = ["derive", "env"] }
+libp2p = { version = "0.54", features = ["dns", "tokio", "noise", "yamux", "identify", "kad", "relay", "dcutr", "ping", "request-response", "gossipsub", "serde", "autonat", "quic"] }
+codec = { package = "parity-scale-codec", version = "3.6.12", default-features = false, features = [
+	"derive",
+] }
+anyhow = "1.0.95"
+log = "0.4.22"
+futures = "0.3.31"
+serde_with = "3"
+thiserror = "1"
+env_logger = "0.11"

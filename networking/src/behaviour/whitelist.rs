@@ -12,8 +12,8 @@ use libp2p::{
 };
 use serde::{Deserialize, Serialize};
 
-use super::super::dummy_chain_client::{AuthorityPeers, ClientError, ContractClient, NodeStream};
 use super::wrapped::{BehaviourWrapper, TToSwarm};
+use crate::chain_client::{AuthorityPeers, ClientError, ContractClient, NodeStream};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct WhitelistConfig {

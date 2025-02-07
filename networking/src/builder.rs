@@ -9,15 +9,42 @@ use libp2p::{
     swarm::{dial_opts::DialOpts, NetworkBehaviour},
     yamux, Multiaddr, PeerId, StreamProtocol, Swarm, SwarmBuilder,
 };
+use serde::{Deserialize, Serialize};
 
-use super::{
-    behaviour::base::{BaseBehaviour, BaseConfig},
+use crate::{
+    behaviour::{
+        base::{BaseBehaviour, BaseConfig},
+        wrapped::Wrapped,
+    },
     cli::{BootNode, TransportArgs},
-    utils::get_keypair,
-    AgentInfo, Error, QuicConfig,
+    utils::{get_keypair, parse_env_var},
+    AgentInfo, Error,
 };
 
 use super::protocol::dht_protocol;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct QuicConfig {
+    /// Maximum transmission unit to use during MTU discovery (default: 1452).
+    pub mtu_discovery_max: u16,
+    /// Interval for sending keep-alive packets in milliseconds (default: 5000).
+    pub keep_alive_interval_ms: u32,
+    /// Timeout after which idle connections are closed in milliseconds (default: 60000).
+    pub max_idle_timeout_ms: u32,
+}
+
+impl QuicConfig {
+    pub fn from_env() -> Self {
+        let mtu_discovery_max = parse_env_var("MTU_DISCOVERY_MAX", 1452);
+        let keep_alive_interval_ms = parse_env_var("KEEP_ALIVE_INTERVAL_MS", 5000);
+        let max_idle_timeout_ms = parse_env_var("MAX_IDLE_TIMEOUT_MS", 60000);
+        Self {
+            mtu_discovery_max,
+            keep_alive_interval_ms,
+            max_idle_timeout_ms,
+        }
+    }
+}
 
 pub struct P2PTransportBuilder {
     keypair: Keypair,
@@ -103,7 +130,7 @@ impl P2PTransportBuilder {
     //         self.contract_client.clone_client()
     //     }
 
-    pub fn build_swarm<T: NetworkBehaviour>(
+    fn build_swarm<T: NetworkBehaviour>(
         mut self,
         behaviour: impl FnOnce(BaseBehaviour) -> T,
     ) -> Result<Swarm<T>, Error> {
@@ -165,6 +192,12 @@ impl P2PTransportBuilder {
                 swarm.listen_on(addr.with(Protocol::P2pCircuit))?;
             }
         }
+
+        Ok(swarm)
+    }
+
+    pub fn build_default_swarm(self) -> Result<Swarm<Wrapped<BaseBehaviour>>, Error> {
+        let swarm = self.build_swarm(|base| base.into())?;
 
         Ok(swarm)
     }

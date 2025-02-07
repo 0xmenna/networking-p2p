@@ -2,7 +2,7 @@ use clap::Args;
 use libp2p::{Multiaddr, PeerId};
 use std::{path::PathBuf, str::FromStr};
 
-use super::protocol::Network;
+use crate::protocol::Network;
 
 #[derive(Args, Clone)]
 pub struct TransportArgs {

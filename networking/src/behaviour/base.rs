@@ -38,11 +38,11 @@ use super::{
     wrapped::{BehaviourWrapper, TToSwarm, Wrapped},
 };
 
-use crate::networking::utils::addr_is_reachable;
+use crate::utils::addr_is_reachable;
 
 use super::super::{
+    chain_client::{AuthorityPeers, ContractClient},
     cli::BootNode,
-    dummy_chain_client::{AuthorityPeers, ContractClient},
     protocol::{ID_PROTOCOL, KNOWN_TOPICS, MAX_PUBSUB_MSG_SIZE},
     utils::parse_env_var,
     AgentInfo,
@@ -135,6 +135,7 @@ impl BaseBehaviour {
         agent_info: AgentInfo,
     ) -> Self {
         let local_peer_id = keypair.public().to_peer_id();
+        log::info!("Local peer id: {local_peer_id}");
         let mut kad_config = kad::Config::new(dht_protocol);
         kad_config.set_query_timeout(config.kad_query_timeout);
         let mut inner = InnerBehaviour {
@@ -379,8 +380,8 @@ impl BehaviourWrapper for BaseBehaviour {
             InnerBehaviourEvent::Kademlia(ev) => self.on_kademlia_event(ev),
             InnerBehaviourEvent::Autonat(ev) => self.on_autonat_event(ev),
             InnerBehaviourEvent::Pubsub(ev) => self.on_pubsub_event(ev),
-            InnerBehaviourEvent::Ping(ev) => None,
-            InnerBehaviourEvent::Dcutr(ev) => None,
+            InnerBehaviourEvent::Ping(_ev) => None,
+            InnerBehaviourEvent::Dcutr(_ev) => None,
             InnerBehaviourEvent::Whitelist(nodes) => self.on_nodes_update(nodes),
             _ => None,
         }
